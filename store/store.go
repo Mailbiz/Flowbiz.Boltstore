@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/boltdb/bolt"
+	"Mailbiz.Boltstore/shared"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
-	"github.com/yosssi/boltstore/shared"
+	bolt "go.etcd.io/bbolt"
 )
 
 // Store represents a session store.

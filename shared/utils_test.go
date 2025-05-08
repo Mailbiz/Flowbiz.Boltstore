@@ -1,7 +1,7 @@
 package shared
 
 import (
-	"github.com/yosssi/boltstore/shared/protobuf"
+	"Mailbiz.Boltstore/shared/protobuf"
 	"testing"
 	"time"
 

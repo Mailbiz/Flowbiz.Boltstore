@@ -1,22 +1,18 @@
-# BoltStore - Session store using Bolt
-
-[![wercker status](https://app.wercker.com/status/752959ce0f923476671e49fb9b76ebe0/m "wercker status")](https://app.wercker.com/project/bykey/752959ce0f923476671e49fb9b76ebe0)
-[![Coverage Status](https://coveralls.io/repos/yosssi/boltstore/badge.png?branch=HEAD)](https://coveralls.io/r/yosssi/boltstore)
-[![GoDoc](http://godoc.org/github.com/yosssi/boltstore?status.png)](http://godoc.org/github.com/yosssi/boltstore)
+# Mailbiz.Boltstore - Session store using bbolt
 
 ## Overview
 
-BoltStore is a session store using [Bolt](https://github.com/boltdb/bolt) which is a pure Go key/value store. You can store session data in Bolt by using this store. This store implements the [gorilla/sessions](https://github.com/gorilla/sessions) package's [Store](http://godoc.org/github.com/gorilla/sessions#Store) interface. BoltStore's APIs and examples can be seen on its [GoDoc](http://godoc.org/github.com/yosssi/boltstore) page.
+Mailbiz.Boltstore is a session store using [bbolt](https://github.com/etcd-io/bbolt) (formerly Bolt), a pure Go key/value store. This store implements the [gorilla/sessions](https://github.com/gorilla/sessions) package's Store interface for session management.
+
+This is a fork of the original [BoltStore](https://github.com/yosssi/boltstore) project, updated to use modern dependencies and maintained by Mailbiz.
 
 ## Installation
 
 ```go
-go get github.com/yosssi/boltstore/...
+go get Mailbiz.Boltstore/...
 ```
 
 ## Example
-
-Here is a simple example using BoltStore. You can see other examples on the BoltStore's [GoDoc](http://godoc.org/github.com/yosssi/boltstore) page.
 
 ```go
 package main
@@ -25,62 +21,120 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/boltdb/bolt"
+	"go.etcd.io/bbolt"
 	"github.com/gorilla/sessions"
-	"github.com/yosssi/boltstore/reaper"
-	"github.com/yosssi/boltstore/store"
+	"Mailbiz.Boltstore/reaper"
+	"Mailbiz.Boltstore/store"
 )
 
-var db *bolt.DB
+var db *bbolt.DB
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	// Create a store.
+	// Create a store
 	str, err := store.New(db, store.Config{}, []byte("secret-key"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	// Get a session.
+	// Get a session
 	session, err := str.Get(r, "session-key")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	// Add a value on the session.
+	// Add a value to the session
 	session.Values["foo"] = "bar"
 
-	// Save the session.
-	if err := sessions.Save(r, w); err != nil {
+	// Save the session
+	if err := session.Save(r, w); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	fmt.Fprintf(w, "Hello BoltStore")
+	fmt.Fprintf(w, "Hello Mailbiz.Boltstore")
 }
 
 func main() {
 	var err error
-	// Open a Bolt database.
-	db, err = bolt.Open("./sessions.db", 0666, nil)
+	// Open a bbolt database
+	db, err = bbolt.Open("./sessions.db", 0666, nil)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
-	// Invoke a reaper which checks and removes expired sessions periodically.
+	
+	// Invoke a reaper which checks and removes expired sessions periodically
 	defer reaper.Quit(reaper.Run(db, reaper.Options{}))
+	
 	http.HandleFunc("/", handler)
 	http.ListenAndServe(":8080", nil)
 }
 ```
 
-## Benchmarks
+## Dependencies
 
-```sh
-BenchmarkNew	    			5000	    316700 ns/op	   19003 B/op	      35 allocs/op
-BenchmarkStore_Get			20000000	       104 ns/op	       0 B/op	       0 allocs/op
-BenchmarkStore_New			10000000	       294 ns/op	     130 B/op	       2 allocs/op
-BenchmarkStore_Save	    		5000	    488683 ns/op	   65484 B/op	     136 allocs/op
-BenchmarkStore_Save_delete	    5000	    476563 ns/op	   59576 B/op	      76 allocs/op
+- Go 1.23+
+- github.com/gorilla/sessions v1.4.0
+- github.com/gorilla/securecookie v1.1.2
+- go.etcd.io/bbolt v1.4.0
+- github.com/gogo/protobuf v1.3.2
+
+## Directory Structure
+
+```
+Mailbiz.Boltstore/
+├── LICENSE
+├── Makefile
+├── README.md
+├── go.mod
+├── go.sum
+├── reaper/
+│   ├── doc.go            # Documentation for the reaper package
+│   ├── options.go        # Configuration options for the reaper
+│   ├── options_test.go   # Tests for reaper options
+│   ├── reaper.go         # Implementation of session cleanup mechanism
+│   └── reaper_test.go    # Tests for the reaper functionality
+├── shared/
+│   ├── consts.go         # Shared constants
+│   ├── doc.go            # Documentation for the shared package
+│   ├── protobuf/         # Protocol buffer definitions and generated code
+│   │   ├── session.pb.go
+│   │   ├── session.pb_test.go
+│   │   └── session.proto
+│   ├── utils.go          # Shared utility functions
+│   └── utils_test.go
+└── store/
+    ├── config.go         # Configuration for the session store
+    ├── config_test.go
+    ├── doc.go            # Documentation for the store package
+    ├── options.go        # Options for configuring the store
+    ├── store.go          # Main implementation of the session store
+    └── store_test.go
 ```
 
-## Documentation
-* [GoDoc](http://godoc.org/github.com/yosssi/boltstore)
+## Workflow Diagram
+
+```mermaid
+flowchart TD
+    A[HTTP Request] --> B[Gorilla Sessions]
+    B --> C[Mailbiz.Boltstore]
+    
+    subgraph Mailbiz.Boltstore
+        C --> D[store.Store Interface]
+        D --> E[store.Config]
+        D --> F[bbolt Database]
+        G[reaper.Run] --> F
+    end
+    
+    F --> H[Session Data Storage]
+    C --> I[HTTP Response with Cookie]
+    
+    J[Session Expiration] --> G
+    G --> K[Delete Expired Sessions]
+    
+    style Mailbiz.Boltstore fill:#f9f9f9,stroke:#333,stroke-width:2px
+```
+
+The workflow shows how HTTP requests are processed through Gorilla Sessions, which uses Mailbiz.Boltstore to persist session data in a bbolt database. The reaper component periodically scans the database and removes expired sessions to prevent unlimited growth of the database file.

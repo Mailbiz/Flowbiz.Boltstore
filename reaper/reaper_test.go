@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/boltdb/bolt"
-	"github.com/yosssi/boltstore/shared"
+	"Mailbiz.Boltstore/shared"
+	bolt "go.etcd.io/bbolt"
 )
 
 func TestRun(t *testing.T) {

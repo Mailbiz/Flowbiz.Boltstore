@@ -1,8 +1,8 @@
 package store
 
 import (
+	"Mailbiz.Boltstore/shared"
 	"github.com/gorilla/sessions"
-	"github.com/yosssi/boltstore/shared"
 )
 
 // Config represents a config for a session store.

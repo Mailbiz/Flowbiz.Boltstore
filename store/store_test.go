@@ -2,6 +2,7 @@ package store
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -11,10 +12,10 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	"github.com/boltdb/bolt"
+	"Mailbiz.Boltstore/shared"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
-	"github.com/yosssi/boltstore/shared"
+	bolt "go.etcd.io/bbolt"
 )
 
 var benchmarkDB = fmt.Sprintf("benchmark_store_%d.db", time.Now().Unix())
@@ -29,7 +30,12 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer func(db *bolt.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Panicln("Error closing the database:", err)
+		}
+	}(db)
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		_, err := tx.CreateBucket([]byte(shared.DefaultBucketName))
@@ -77,7 +83,12 @@ func TestStore_Get(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	defer db.Close()
+	defer func(db *bolt.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Panicln("Error closing the database:", err)
+		}
+	}(db)
 
 	req, err := http.NewRequest("GET", "http://localhost:3000/", nil)
 	if err != nil {
