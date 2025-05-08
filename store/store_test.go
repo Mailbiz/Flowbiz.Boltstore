@@ -12,7 +12,7 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	"Mailbiz.Boltstore/shared"
+	"Boltstore/shared"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	bolt "go.etcd.io/bbolt"

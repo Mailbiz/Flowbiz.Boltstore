@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"Mailbiz.Boltstore/shared"
+	"Boltstore/shared"
 	bolt "go.etcd.io/bbolt"
 )
 

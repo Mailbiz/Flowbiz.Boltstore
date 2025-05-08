@@ -3,7 +3,7 @@ package shared
 import (
 	"time"
 
-	"Mailbiz.Boltstore/shared/protobuf"
+	"Boltstore/shared/protobuf"
 	"github.com/gogo/protobuf/proto"
 )
 

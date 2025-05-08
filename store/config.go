@@ -1,7 +1,7 @@
 package store
 
 import (
-	"Mailbiz.Boltstore/shared"
+	"Boltstore/shared"
 	"github.com/gorilla/sessions"
 )
 
