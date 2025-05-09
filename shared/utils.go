@@ -3,8 +3,8 @@ package shared
 import (
 	"time"
 
-	"Mailbiz.Boltstore/shared/protobuf"
 	"github.com/gogo/protobuf/proto"
+	"github.com/mailbiz/Mailbiz.Boltstore/shared/protobuf"
 )
 
 // Session converts the byte slice to the session struct value.

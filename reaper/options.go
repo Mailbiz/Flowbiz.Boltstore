@@ -3,7 +3,7 @@ package reaper
 import (
 	"time"
 
-	"Mailbiz.Boltstore/shared"
+	"github.com/mailbiz/Mailbiz.Boltstore/shared"
 )
 
 // Options represents options for the reaper.

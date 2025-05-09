@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"Mailbiz.Boltstore/shared"
+	"github.com/mailbiz/Mailbiz.Boltstore/shared"
 	bolt "go.etcd.io/bbolt"
 )
 

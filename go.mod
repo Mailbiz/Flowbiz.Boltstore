@@ -1,4 +1,4 @@
-module Mailbiz.Boltstore
+module github.com/mailbiz/Mailbiz.Boltstore
 
 go 1.23.1
 

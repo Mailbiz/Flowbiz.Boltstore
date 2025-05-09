@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strings"
 
-	"Mailbiz.Boltstore/shared"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
+	"github.com/mailbiz/Mailbiz.Boltstore/shared"
 	bolt "go.etcd.io/bbolt"
 )
 
