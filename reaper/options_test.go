@@ -3,7 +3,7 @@ package reaper
 import (
 	"testing"
 
-	"github.com/mailbiz/Mailbiz.Boltstore/shared"
+	"github.com/Mailbiz/Flowbiz.Boltstore/shared"
 )
 
 func TestOptions_setDefault(t *testing.T) {

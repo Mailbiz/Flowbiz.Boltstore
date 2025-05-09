@@ -3,7 +3,7 @@ package store
 import (
 	"testing"
 
-	"github.com/mailbiz/Mailbiz.Boltstore/shared"
+	"github.com/Mailbiz/Flowbiz.Boltstore/shared"
 )
 
 func TestConfig_setDefault(t *testing.T) {
